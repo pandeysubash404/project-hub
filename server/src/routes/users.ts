@@ -35,6 +35,13 @@ router.patch(
   validate(updateUserOrgSchema),
   usersController.updateUserOrg
 );
+// PATCH /api/users/:userId/orgs
+router.patch(
+  '/:userId/orgs',
+  verifyToken(),
+  validate(updateUserOrgSchema),
+  usersController.updateUserOrgs
+);
 
 // PATCH /api/users/:userId/profile
 router.patch(

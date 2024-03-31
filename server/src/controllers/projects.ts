@@ -21,6 +21,14 @@ const getProjectsByOrgId = async (req: Request, res: Response) => {
     if (!orgId) {
       return res.status(400).json({ message: 'Missing organization ID' });
     }
+
+    // Fetch the user's role from the database
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const userRole = user.role;
+
     const organization = await Organization.findOne({ _id: orgId }).populate<{
       projects: PopulatedProject[];
     }>({
@@ -37,9 +45,17 @@ const getProjectsByOrgId = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Organization not found' });
     }
 
-    const filteredProjects = organization.projects.filter((project) =>
-      project.members.some((member) => member._id.toString() === userId)
-    );
+    let filteredProjects = organization.projects;
+
+    if (userRole !== 'admin') {
+      filteredProjects = filteredProjects.filter((project) =>
+        project.members.some((member) => member._id.toString() === userId)
+      );
+    }
+
+    // const filteredProjects = organization.projects.filter((project) =>
+    //   project.members.some((member) => member._id.toString() === userId)
+    // );
 
     const issuesLast7Days = getIssuesLast7Days(filteredProjects);
     return res.json({
@@ -119,7 +135,7 @@ const getProjectById = async (req: Request, res: Response) => {
   try {
     const project = await Project.findOne({
       _id: req.params.projectId,
-      members: userId,
+     // members: userId,
     })
       .populate({
         path: 'members',

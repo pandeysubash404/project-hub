@@ -20,9 +20,8 @@ const updateUserOrg = async ({
   if (typeof userId === 'undefined') {
     return Promise.reject(new Error('Invalid userId'));
   }
-
   const { data } = await customAxios.patch<User>(
-    `/users/${userId}/org`,
+    `/users/${userId}/orgs`,
     userData
   );
   return data;

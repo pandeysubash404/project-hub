@@ -14,6 +14,24 @@ const getOrg = async (orgId: string | undefined): Promise<Organization> => {
   return data;
 };
 
+const getAllOrgs = async (): Promise<Organization[]> => {
+  const { data } = await customAxios.get<Organization[]>('/organizations');
+  return data;
+};
+
+export const useGetAllOrgs = () => {
+  const queryClient = useQueryClient();
+
+  return useQuery({
+    queryKey: ['orgs'],
+    queryFn: getAllOrgs,
+    onError: (er) => {
+      refetchUserOnError(er, queryClient);
+    },
+  });
+};
+
+
 export const useGetOrg = (orgId: string | undefined) => {
   const queryClient = useQueryClient();
 

@@ -46,7 +46,7 @@ function WelcomeForm({ user }: WelcomeFormProps) {
         return {
           organization:
             values.organization.trim().length < 1
-              ? "Please enter your organization"
+              ? "Please select your organization"
               : null,
           position:
             values.position.trim().length < 1
@@ -107,6 +107,7 @@ function WelcomeForm({ user }: WelcomeFormProps) {
           description,
           category,
           orgId: user.org?._id,
+         // orgId: user.org?._id,
           userId: user._id,
         },
         {
@@ -142,6 +143,7 @@ function WelcomeForm({ user }: WelcomeFormProps) {
           description="Organization settings"
           loading={updateUserOrgMutation.isLoading}
         >
+          {/* <CreateOrgForm form={form} onSubmit={(e) => e.preventDefault()}} /> */}
           <CreateOrgForm form={form} handleSubmit={handleSubmit} />
         </Stepper.Step>
         <Stepper.Step
@@ -160,7 +162,7 @@ function WelcomeForm({ user }: WelcomeFormProps) {
             size="md"
             loading={updateUserOrgMutation.isLoading}
           >
-            Create Organization
+            Select Organization
           </Button>
         )}
         {active === 1 && (

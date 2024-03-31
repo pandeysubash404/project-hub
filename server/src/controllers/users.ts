@@ -7,8 +7,11 @@ import Organization from 'models/organizations';
 import ProjectHistory from 'models/projectHistory';
 import Project from 'models/projects';
 import User from 'models/users';
+import { ObjectId , Types} from 'mongoose';
+import mongoose from 'mongoose';
 import { generateDemoData } from 'utils/generateDemoData';
 import { signToken } from 'utils/signToken';
+
 
 type RegisterUserReqBody = {
   firstName: string;
@@ -117,7 +120,8 @@ const getallUser= async (req: Request, res: Response) => {
 };
 
 type UpdateUserOrgReqBody = {
-  org: string;
+  orgId:ObjectId;
+  org?:string;
   position: string;
   role: 'admin' | 'project manager' | 'member';
 };
@@ -128,7 +132,7 @@ const updateUserOrg = async (
 ) => {
   const { userId } = req.params;
   const { org, position, role } = req.body;
-
+  console.log(`Incomming: `+org);
   try {
     const user = await User.findOne({ _id: userId }).select('-password');
     if (!user) {
@@ -146,7 +150,65 @@ const updateUserOrg = async (
     user.role = role;
     const savedUser = await user.save();
     const populatedUser = await savedUser.populate('org');
+    console.log(`Out going: `+populatedUser);
     return res.json(populatedUser);
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+};
+
+
+const updateUserOrgs = async (
+  req: Request<ParamsDictionary, any, UpdateUserOrgReqBody>,
+  res: Response
+) => {
+  const { userId } = req.params;
+  const { org, position, role } = req.body;
+
+  try {
+    // Find the user
+    const user = await User.findOne({ _id: userId }).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if org is provided
+    if (!org) {
+      return res.status(400).json({ message: 'Organization ID is required' });
+    }
+
+    // Convert org from string to ObjectId
+    const orgId =new mongoose.Types.ObjectId(org);
+
+    // Find the organization
+    const organization = await Organization.findById(org);
+    if (!organization) {
+      return res.status(404).json({ message: 'Organization not found' });
+    }
+
+    // Update user's organization reference and role
+    user.org = orgId;
+    user.position = position;
+    user.role = role;
+
+    // Save the user
+    const savedUser = await user.save();
+
+     // Update organization members
+     const updatedOrganization = await Organization.findOneAndUpdate(
+      { _id: orgId },
+      { $addToSet: { members: userId } }, // Add userId to members if it doesn't already exist
+      { new: true, runValidators: true }
+    ).populate({ path: 'members', select: '-password' });
+
+    if (!updatedOrganization) {
+      return res.status(404).json({ message: 'Organization not found' });
+    }
+
+    // Populate user's organization information
+    await savedUser.populate('org');
+
+    return res.json(savedUser);
   } catch (err) {
     return res.status(400).json(err);
   }
@@ -243,6 +305,7 @@ export default {
   getUserById,
   getallUser,
   updateUserOrg,
+  updateUserOrgs,
   updateUserProfile,
   updateUserRole,
   createDemoAccount,
