@@ -51,7 +51,7 @@ function CreateOrgForm({ form, handleSubmit }: CreateOrgFormProps) {
       />
       <Select
         label="Role"
-        description="Only 'Admin' is allowed in demo"
+        // description="Only 'Admin' is allowed in demo"
         //readOnly
         // disabled
         // data={[{ value: "admin", label: "Admin" }]}

@@ -20,6 +20,9 @@ router.get('/:projectId/history', projectHistoryController.getProjectHistory);
 // PATCH /api/projects/:projectId
 router.patch('/:projectId', projectsController.updateProject);
 
+// PATCH /api/projects/:projectId/:memberId
+router.patch('/:projectId/:memberId', projectsController.updateProjectMember);
+
 // DELETE /api/projects/:projectId
 router.delete('/:projectId', projectsController.deleteProject);
 

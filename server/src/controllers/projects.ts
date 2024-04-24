@@ -158,7 +158,54 @@ type UpdateProjectReqBody = {
   name: string;
   description: string;
   category: 'business' | 'marketing' | 'software';
+  memberId:string;
+  remove:boolean;
 };
+
+const updateProjectMember = async (
+  req: Request<ParamsDictionary, any, UpdateProjectReqBody>,
+  res: Response
+) => {
+  const { projectId } = req.params;
+  console.log(req.body);
+  console.log("outside remove: ",req.body.remove);
+  try {
+    let updatedProject;
+
+    // If memberId is provided, update the project's members
+    if (req.body.memberId) {
+      if (req.body.remove) {
+        console.log("inside remove: ",req.body.remove);
+        // Remove the member from the project
+        updatedProject = await Project.findByIdAndUpdate(
+          projectId,
+          { $pull: { members: req.body.memberId } },
+          { new: true, runValidators: true }
+        );
+        console.log("updated remove:",updateProject);
+      } else {
+        // Add the member to the project
+        updatedProject = await Project.findByIdAndUpdate(
+          projectId,
+          { $addToSet: { members: req.body.memberId } },
+          { new: true, runValidators: true }
+        );
+      }
+    } else {
+      // If no memberId provided, return an error
+      return res.status(400).json({ message: "No memberId provided" });
+    }
+
+    if (!updatedProject) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    return res.json(updatedProject);
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+};
+
 
 const updateProject = async (
   req: Request<ParamsDictionary, any, UpdateProjectReqBody>,
@@ -224,5 +271,6 @@ export default {
   createProject,
   getProjectById,
   updateProject,
+  updateProjectMember,
   deleteProject,
 };

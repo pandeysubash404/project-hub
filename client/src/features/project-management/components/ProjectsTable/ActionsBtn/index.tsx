@@ -8,6 +8,7 @@ import { Project } from "types";
 import styles from "./ActionsBtn.module.css";
 import DeleteProjectModal from "./DeleteProjectModal";
 import EditProjectModal from "./EditProjectModal";
+import ManageMemberModal from "./ManageMemberModal";
 
 type ActionsBtnProps = {
   project: Project;
@@ -17,6 +18,7 @@ type ActionsBtnProps = {
 function ActionsBtn({ project, orgId }: ActionsBtnProps) {
   const [editModalOpened, setEditModalOpened] = useState(false);
   const [deleteModalOpened, setDeleteModalOpened] = useState(false);
+  const [manageModalOpened, setManageModalOpened] = useState(false);
 
   return (
     <>
@@ -41,6 +43,12 @@ function ActionsBtn({ project, orgId }: ActionsBtnProps) {
           </Menu.Item>
           <Menu.Item
             icon={<Users size={18} />}
+            onClick={() => setManageModalOpened(true)}
+          >
+            Manage Members
+          </Menu.Item>
+          {/* <Menu.Item
+            icon={<Users size={18} />}
             className={styles["not-implemented"]}
             onClick={() =>
               showNotification({
@@ -52,7 +60,7 @@ function ActionsBtn({ project, orgId }: ActionsBtnProps) {
             }
           >
             Manage Members
-          </Menu.Item>
+          </Menu.Item> */}
           <Menu.Item
             icon={<Trash size={18} />}
             color="red.8"
@@ -65,6 +73,12 @@ function ActionsBtn({ project, orgId }: ActionsBtnProps) {
       <EditProjectModal
         opened={editModalOpened}
         onClose={() => setEditModalOpened(false)}
+        project={project}
+        orgId={orgId}
+      />
+      <ManageMemberModal
+        opened={manageModalOpened}
+        onClose={() => setManageModalOpened(false)}
         project={project}
         orgId={orgId}
       />

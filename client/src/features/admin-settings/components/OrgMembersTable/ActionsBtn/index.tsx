@@ -1,12 +1,13 @@
-import { Button, Menu } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
-import React, { useState } from 'react';
-import { ChevronDown, Edit, Minus, Trash } from 'tabler-icons-react';
+import { Button, Menu } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
+import React, { useState } from "react";
+import { ChevronDown, Edit, Minus, Trash } from "tabler-icons-react";
 
-import { User } from 'types';
+import { User } from "types";
 
-import styles from './ActionsBtn.module.css';
-import EditRoleModal from './EditRoleModal';
+import styles from "./ActionsBtn.module.css";
+import EditRoleModal from "./EditRoleModal";
+import RemoveMemberModal from "./RemoveMemberModal";
 
 type ActionsBtnProps = {
   member: User<string>;
@@ -15,6 +16,7 @@ type ActionsBtnProps = {
 
 function ActionsBtn({ member, orgId }: ActionsBtnProps) {
   const [opened, setOpened] = useState(false);
+  const [removedopened, setRemoveOpened] = useState(false);
 
   return (
     <>
@@ -36,8 +38,14 @@ function ActionsBtn({ member, orgId }: ActionsBtnProps) {
           </Menu.Item>
           <Menu.Item
             icon={<Trash size={18} />}
+            onClick={() => setRemoveOpened(true)}
+          >
+            Remove Member
+          </Menu.Item>
+          {/* <Menu.Item
+            icon={<Trash size={18} />}
             color="red.8"
-            className={styles['not-implemented']}
+            className={styles["not-implemented"]}
             onClick={() =>
               showNotification({
                 title: 'Unavailable',
@@ -48,13 +56,18 @@ function ActionsBtn({ member, orgId }: ActionsBtnProps) {
             }
           >
             Remove Member
-          </Menu.Item>
+          </Menu.Item> */}
         </Menu.Dropdown>
       </Menu>
       <EditRoleModal
         opened={opened}
         onClose={() => setOpened(false)}
         member={member}
+        orgId={orgId}
+      />
+      <RemoveMemberModal
+        opened={removedopened}
+        onClose={() => setRemoveOpened(false)}
         orgId={orgId}
       />
     </>

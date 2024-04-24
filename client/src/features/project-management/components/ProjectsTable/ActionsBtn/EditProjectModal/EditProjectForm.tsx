@@ -1,12 +1,12 @@
-import { Button, Group, Select, Textarea, TextInput } from '@mantine/core';
-import { useForm, zodResolver } from '@mantine/form';
-import { showNotification } from '@mantine/notifications';
-import React from 'react';
-import { ExclamationMark } from 'tabler-icons-react';
-import { z } from 'zod';
+import { Button, Group, Select, Textarea, TextInput } from "@mantine/core";
+import { useForm, zodResolver } from "@mantine/form";
+import { showNotification } from "@mantine/notifications";
+import React from "react";
+import { ExclamationMark } from "tabler-icons-react";
+import { z } from "zod";
 
-import { useUpdateProject } from 'api/projects/updateProject';
-import { Project } from 'types';
+import { useUpdateProject } from "api/projects/updateProject";
+import { Project } from "types";
 
 type EditProjectFormProps = {
   onClose: () => void;
@@ -15,11 +15,11 @@ type EditProjectFormProps = {
 };
 
 const editProjectSchema = z.object({
-  name: z.string().trim().min(1, { message: 'Please enter your project name' }),
+  name: z.string().trim().min(1, { message: "Please enter your project name" }),
   description: z
     .string()
     .trim()
-    .min(1, { message: 'Please enter your project description' }),
+    .min(1, { message: "Please enter your project description" }),
 });
 
 function EditProjectForm({ onClose, project, orgId }: EditProjectFormProps) {
@@ -48,9 +48,9 @@ function EditProjectForm({ onClose, project, orgId }: EditProjectFormProps) {
         },
         onError: () => {
           showNotification({
-            title: 'Error',
-            message: 'Failed to update project. Please try again.',
-            color: 'red',
+            title: "Error",
+            message: "Failed to update project. Please try again.",
+            color: "red",
             icon: <ExclamationMark />,
           });
         },
@@ -64,24 +64,24 @@ function EditProjectForm({ onClose, project, orgId }: EditProjectFormProps) {
         label="Name"
         mb={15}
         withAsterisk
-        {...form.getInputProps('name')}
+        {...form.getInputProps("name")}
       />
       <Textarea
         label="Description"
         minRows={4}
         mb={15}
         withAsterisk
-        {...form.getInputProps('description')}
+        {...form.getInputProps("description")}
       />
       <Select
         label="Category"
         data={[
-          { value: 'business', label: 'Business' },
-          { value: 'marketing', label: 'Marketing' },
-          { value: 'software', label: 'Software' },
+          { value: "business", label: "Business" },
+          { value: "marketing", label: "Marketing" },
+          { value: "software", label: "Software" },
         ]}
         withAsterisk
-        {...form.getInputProps('category')}
+        {...form.getInputProps("category")}
       />
       <Group position="right" spacing={20} mt={20}>
         <Button variant="outline" onClick={onClose}>
