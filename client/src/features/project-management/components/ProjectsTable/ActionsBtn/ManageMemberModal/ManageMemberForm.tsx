@@ -92,7 +92,7 @@ function ManageMemberForm({ onClose, project, orgId }: ManageMemberFormProps) {
   
   
   return (
-    <div>
+    <div style={{ maxHeight: "70vh", overflowY: "auto" }}>
       <br />
       <h4>Project Members</h4>
       <Table withBorder verticalSpacing="md" horizontalSpacing={20}>
@@ -100,6 +100,7 @@ function ManageMemberForm({ onClose, project, orgId }: ManageMemberFormProps) {
           {project.members.map((member) => (
             <tr key={member._id}>
               <td>{`${member.firstName} ${member.lastName}`}</td>
+              <td>{`${member.role}`}</td>
               <td>
                 <Button
                   variant="outline"
@@ -118,10 +119,18 @@ function ManageMemberForm({ onClose, project, orgId }: ManageMemberFormProps) {
       <br />
       <h4>Organization Members Not in Project</h4>
       <Table withBorder verticalSpacing="md" horizontalSpacing={20}>
+      <thead>
+          <tr>
+            <th>Name</th>
+            <th>Role</th>
+            <th></th>
+          </tr>
+        </thead>
         <tbody>
           {getMembersNotInProject().map((member) => (
             <tr key={member._id}>
               <td>{`${member.firstName} ${member.lastName}`}</td>
+              <td>{member.role}</td>
               <td>
                 <Button
                   variant="filled"

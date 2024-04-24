@@ -1,7 +1,7 @@
 //routes
 
 import express from 'express';
-import { getOrganizationById, getAllOrganizations } from '../controllers/organizations';
+import { getOrganizationById, getAllOrganizations , updateOrganization} from '../controllers/organizations';
 
 const router = express.Router();
 
@@ -15,5 +15,8 @@ router.get('/:orgId', getOrganizationById);
 
 // GET /api/organizations
 router.get('/', getAllOrganizations);
+
+// PATCH /api/organizations/:orgId/:memberId
+router.patch('/:orgId/:memberId',updateOrganization);
 
 export default router;

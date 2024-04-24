@@ -28,6 +28,7 @@ function ManageMemberModal({
       withCloseButton={false}
       transitionDuration={300}
       centered
+      size="base"
     >
       <ModalHeader
         title="Manage Members"

@@ -205,6 +205,8 @@ const updateUserOrgs = async (
       return res.status(404).json({ message: 'Organization not found' });
     }
 
+    await User.findOneAndUpdate({ _id: userId }, { completedWelcome: true });
+
     // Populate user's organization information
     await savedUser.populate('org');
 

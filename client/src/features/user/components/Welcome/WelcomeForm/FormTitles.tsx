@@ -14,12 +14,12 @@ function FormTitles({ active, name }: FormTitlesProps) {
       </Text>
       {active === 0 && (
         <Text weight={500} size={20} mb={30}>
-          Let&apos;s create your organization.
+          Let&apos;s select organization.
         </Text>
       )}
       {active === 1 && (
         <Text weight={500} size={20} mb={30}>
-          Let&apos;s create your first project.
+          Let&apos;s create your first project or skip.
         </Text>
       )}
     </>

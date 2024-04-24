@@ -1,41 +1,40 @@
-import { ActionIcon, Button, Group, Modal, Text } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
-import React from 'react';
-import { AlertTriangle, ExclamationMark, X } from 'tabler-icons-react';
-
-
-import styles from './RemoveMemberModal.module.css';
+import { ActionIcon, Button, Group, Modal, Text } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
+import React from "react";
+import { AlertTriangle, X } from "tabler-icons-react";
+import styles from "./RemoveMemberModal.module.css";
+import { useRemoveOrgMem } from "api/organizations/updateOrgMem";
+import { useUpdateUserOrg } from "api/users/updateUserOrg";
 
 type RemoveMemberModalProps = {
   opened: boolean;
   onClose: () => void;
-  orgId: string | undefined;
+  orgId: string;
+  memberId: string;
 };
 
 function RemoveMemberModal({
   opened,
   onClose,
   orgId,
+  memberId,
 }: RemoveMemberModalProps) {
- // const deleteProjectMutation = useDeleteProject();
+  const updateUserMutation = useRemoveOrgMem(orgId, memberId);
 
-  const handleClickDelete = () => {
-    // deleteProjectMutation.mutate(
-    //   {, orgId },
-    //   {
-    //     onSuccess: () => {
-    //       onClose();
-    //     },
-    //     onError: () => {
-    //       showNotification({
-    //         title: 'Error',
-    //         message: 'Failed to delete project. Please try again.',
-    //         color: 'red',
-    //         icon: <ExclamationMark />,
-    //       });
-    //     },
-    //   }
-    // );
+  const handleClickRemove = () => {
+    updateUserMutation.mutate(undefined, {
+      onSuccess: () => {
+        onClose();
+      },
+      onError: () => {
+        showNotification({
+          title: "Error",
+          message: "Failed to remove member. Please try again.",
+          color: "red",
+          icon: <AlertTriangle />,
+        });
+      },
+    });
   };
 
   return (
@@ -50,21 +49,21 @@ function RemoveMemberModal({
       <div className={styles.delete}>
         <AlertTriangle color="#DE350B" size={24} />
         <Text weight={700} size={20}>
-          Delete project?
+          Remove member?
         </Text>
         <ActionIcon
           ml="auto"
           color="dark"
-          className={styles['action-btn']}
+          className={styles["action-btn"]}
           onClick={onClose}
-          aria-label="Close delete project modal"
+          aria-label="Close member modal"
         >
           <X size={20} />
         </ActionIcon>
       </div>
       <Text size={15}>
-        Are you sure you want to delete this project? This action cannot be
-        undone.
+        Are you sure you want to remove from the organization? This action
+        cannot be undone.
       </Text>
       <Group mt={25} position="right">
         <Button variant="default" onClick={onClose}>
@@ -72,12 +71,10 @@ function RemoveMemberModal({
         </Button>
         <Button
           color="red.8"
-          onClick={handleClickDelete}
-          // loading={
-          //   deleteProjectMutation.isLoading || deleteProjectMutation.isSuccess
-          // }
+          onClick={handleClickRemove}
+          loading={updateUserMutation.isLoading || updateUserMutation.isSuccess}
         >
-          Delete
+          Remove
         </Button>
       </Group>
     </Modal>

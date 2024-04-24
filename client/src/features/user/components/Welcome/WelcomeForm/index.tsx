@@ -32,6 +32,11 @@ function WelcomeForm({ user }: WelcomeFormProps) {
   const updateUserOrgMutation = useUpdateUserOrg();
   const createProjectMutation = useCreateProject();
 
+
+  function skipFunction(status:boolean){
+    navigate("/dashboard", { replace: status });
+  }
+
   const form = useForm<WelcomeFormValues>({
     initialValues: {
       organization: "",
@@ -107,7 +112,6 @@ function WelcomeForm({ user }: WelcomeFormProps) {
           description,
           category,
           orgId: user.org?._id,
-         // orgId: user.org?._id,
           userId: user._id,
         },
         {
@@ -165,7 +169,7 @@ function WelcomeForm({ user }: WelcomeFormProps) {
             Select Organization
           </Button>
         )}
-        {active === 1 && (
+        {(active === 1 && (
           <Button
             type="submit"
             form="create-project-form"
@@ -176,6 +180,17 @@ function WelcomeForm({ user }: WelcomeFormProps) {
           >
             Create Project
           </Button>
+        ))}
+        {(active === 1 &&(
+          <Button
+            variant="outline"
+            form="create-project-form"
+            size="md"
+            onClick={()=>skipFunction(true)}
+          >
+            Skip
+          </Button>
+        )
         )}
       </Group>
     </Card>

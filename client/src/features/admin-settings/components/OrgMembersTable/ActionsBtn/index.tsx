@@ -68,6 +68,7 @@ function ActionsBtn({ member, orgId }: ActionsBtnProps) {
       <RemoveMemberModal
         opened={removedopened}
         onClose={() => setRemoveOpened(false)}
+        memberId={member._id}
         orgId={orgId}
       />
     </>
