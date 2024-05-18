@@ -1,11 +1,11 @@
-import { Avatar, Button, Center, Group, Stack, TextInput } from '@mantine/core';
-import { useForm, zodResolver } from '@mantine/form';
-import React, { useEffect, useState } from 'react';
-import { z } from 'zod';
+import { Avatar, Button, Center, Group, Stack, TextInput } from "@mantine/core";
+import { useForm, zodResolver } from "@mantine/form";
+import React, { useEffect, useState } from "react";
+import { z } from "zod";
 
-import { useUpdateUserProfile } from 'api/users/updateUserProfile';
-import { User } from 'types';
-import { getInitials } from 'utils/getInitials';
+import { useUpdateUserProfile } from "api/users/updateUserProfile";
+import { User } from "types";
+import { getInitials } from "utils/getInitials";
 
 type EditProfileFormProps = {
   user: User;
@@ -16,12 +16,12 @@ const editProfileSchema = z.object({
   firstName: z
     .string()
     .trim()
-    .min(1, { message: 'Please enter your first name' }),
+    .min(1, { message: "Please enter your first name" }),
   lastName: z
     .string()
     .trim()
-    .min(1, { message: 'Please enter your last name' }),
-  position: z.string().trim().min(1, { message: 'Please enter your position' }),
+    .min(1, { message: "Please enter your last name" }),
+  position: z.string().trim().min(1, { message: "Please enter your position" }),
 });
 
 function EditProfileForm({ user, onClose }: EditProfileFormProps) {
@@ -29,8 +29,8 @@ function EditProfileForm({ user, onClose }: EditProfileFormProps) {
     initialValues: {
       firstName: user.firstName,
       lastName: user.lastName,
-      email: user.isDemo ? 'guest@gmail.com' : user.email,
-      position: user.position || '',
+      email: user.isDemo ? "guest@gmail.com" : user.email,
+      position: user.position || "",
     },
     validate: zodResolver(editProfileSchema),
   });
@@ -71,26 +71,26 @@ function EditProfileForm({ user, onClose }: EditProfileFormProps) {
         <TextInput
           label="First Name"
           withAsterisk
-          {...form.getInputProps('firstName')}
+          {...form.getInputProps("firstName")}
         />
         <TextInput
           label="Last Name"
           withAsterisk
-          {...form.getInputProps('lastName')}
+          {...form.getInputProps("lastName")}
         />
         <TextInput
           label="Email"
-          description="Email is read-only in demo"
+          description="Email cannot be change"
           withAsterisk
           readOnly
           disabled
-          inputWrapperOrder={['label', 'input', 'description', 'error']}
-          {...form.getInputProps('email')}
+          inputWrapperOrder={["label", "input", "description", "error"]}
+          {...form.getInputProps("email")}
         />
         <TextInput
           label="Position"
           withAsterisk
-          {...form.getInputProps('position')}
+          {...form.getInputProps("position")}
         />
         <Group position="right" spacing={20} mt={10}>
           <Button variant="outline" onClick={onClose}>
