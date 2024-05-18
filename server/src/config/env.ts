@@ -4,6 +4,8 @@ dotenv.config();
 
 const env = {
   port: process.env.PORT || 3000,
+  email_user: process.env.EMAIL_USER || "panndeysubash404@gamil.com" as string,
+  email_pass: process.env.EMAIL_PASS || "@Test404" as string,
   mongo: {
     uri: process.env.MONGO_URI as string,
   },

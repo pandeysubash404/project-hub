@@ -6,6 +6,9 @@ import Issue, { IIssue } from 'models/issues';
 import Organization from 'models/organizations';
 import ProjectHistory, { History } from 'models/projectHistory';
 import Project, { IProject } from 'models/projects';
+import User from '../models/users'; 
+import { sendAssignmentEmail } from '../utils/emailHelper'; 
+
 
 type CreateIssueReqBody = {
   project: string;
@@ -163,11 +166,12 @@ type UpdateIssueReqBody = {
   updatedFields: string[];
   userId: string;
 };
-
+/*
 const updateIssue = async (
   req: Request<ParamsDictionary, any, UpdateIssueReqBody>,
   res: Response
 ) => {
+  console.log("Update Issues:",req.body);
   const { issueId } = req.params;
   const {
     type,
@@ -255,6 +259,105 @@ const updateIssue = async (
     return res.status(400).json(err);
   }
 };
+*/
+const updateIssue = async (
+  req: Request<ParamsDictionary, any, UpdateIssueReqBody>,
+  res: Response
+) => {
+  console.log("Update Issues:", req.body);
+  const { issueId } = req.params;
+  const {
+    type,
+    priority,
+    status,
+    title,
+    description,
+    reporter,
+    assignee,
+    dueDate,
+    updatedFields,
+    userId,
+  } = req.body;
+
+  try {
+    const issue = await Issue.findOne({ _id: issueId });
+    if (!issue) {
+      return res.status(404).json({ message: 'Issue not found' });
+    }
+
+    const mapIssueTypes = {
+      'to do': 'todoIssues',
+      'in progress': 'inProgressIssues',
+      'in review': 'inReviewIssues',
+      done: 'completedIssues',
+    } as const;
+    const source = issue.status;
+    const destination = status;
+
+    issue.type = type;
+    issue.priority = priority;
+    issue.status = status;
+    issue.title = title;
+    issue.description = description;
+    issue.reporter = new mongoose.Types.ObjectId(reporter);
+    issue.assignee = assignee ? new mongoose.Types.ObjectId(assignee) : undefined;
+    issue.dueDate = dueDate ? new Date(dueDate) : undefined;
+
+    if (destination === 'done' && source !== 'done') {
+      issue.completedAt = new Date();
+    }
+    if (destination !== 'done' && source === 'done') {
+      issue.completedAt = undefined;
+    }
+    await issue.save();
+
+    if (source !== destination) {
+      await Project.findOneAndUpdate(
+        { _id: issue.project },
+        {
+          $pull: { [mapIssueTypes[source]]: issue._id },
+          $push: { [mapIssueTypes[destination]]: issue._id },
+        }
+      );
+    }
+
+    const projectHistory = await ProjectHistory.findOne({ projectId: issue.project });
+    const history: History = {
+      issueId: issue._id,
+      issueTitle: issue.title,
+      user: new mongoose.Types.ObjectId(userId),
+      mutation: 'update',
+      updatedFields,
+      date: new Date(),
+      isDeleted: false,
+    };
+    if (projectHistory) {
+      projectHistory.history = [history, ...projectHistory.history];
+      await projectHistory.save();
+    }
+
+    // Fetch the user details for assignee, reporter, and the user who assigned the issue
+    const assigneeUser = await User.findById(assignee);
+    const reporterUser = await User.findById(reporter);
+    const assigningUser = await User.findById(userId);
+
+    if (updatedFields.includes('assignee') && assigneeUser && assigningUser && reporterUser) {
+      // Send email notification to the assignee
+      await sendAssignmentEmail({
+        to: assigneeUser.email,
+        assigneeName: `${assigneeUser.firstName} ${assigneeUser.lastName}`,
+        assigningUserName: `${assigningUser.firstName} ${assigningUser.lastName}`,
+        reporterName: `${reporterUser.firstName} ${reporterUser.lastName}`,
+        issue: { title, description, priority, status, type },
+      });
+    }
+
+    return res.json(issue);
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+};
+
 
 type UpdateIssueStatusReqBody = {
   source:
