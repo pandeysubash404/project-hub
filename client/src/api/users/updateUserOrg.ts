@@ -40,3 +40,25 @@ export const useUpdateUserOrg = () => {
     },
   });
 };
+
+const removeUser = async ({userId}: { userId: string; }):Promise<void> => {
+  if (!userId) {
+    return Promise.reject(new Error('Invalid userId'));
+  }
+  await customAxios.delete(`/users/${userId}`);
+};
+
+export const useRemoveUser = (userId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation(() => removeUser({ userId }), {
+    onSuccess: () => {
+      // Invalidate relevant queries to trigger a refetch
+      queryClient.invalidateQueries(['users']);
+    },
+    onError: (err) => {
+      // Handle error and trigger user refetch if needed
+      refetchUserOnError(err, queryClient);
+    },
+  });
+};

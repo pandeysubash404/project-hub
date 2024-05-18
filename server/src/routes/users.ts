@@ -28,13 +28,9 @@ router.get("/:userId([0-9a-fA-F]{24})", verifyToken(), usersController.getUserBy
 // GET /api/users/users
 router.get('/users', usersController.getallUser);
 
-// PATCH /api/users/:userId/org
-router.patch(
-  '/:userId/org',
-  verifyToken(),
-  validate(updateUserOrgSchema),
-  usersController.updateUserOrg
-);
+// DELETE /api/users/:userId
+router.delete("/:userId([0-9a-fA-F]{24})", verifyToken(), usersController.deleteUser);
+
 // PATCH /api/users/:userId/orgs
 router.patch(
   '/:userId/orgs',

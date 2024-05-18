@@ -4,7 +4,7 @@ import React from "react";
 import { AlertTriangle, X } from "tabler-icons-react";
 import styles from "./RemoveMemberModal.module.css";
 import { useRemoveOrgMem } from "api/organizations/updateOrgMem";
-import { useUpdateUserOrg } from "api/users/updateUserOrg";
+import { useRemoveUser, useUpdateUserOrg } from "api/users/updateUserOrg";
 
 type RemoveMemberModalProps = {
   opened: boolean;
@@ -19,7 +19,8 @@ function RemoveMemberModal({
   orgId,
   memberId,
 }: RemoveMemberModalProps) {
-  const updateUserMutation = useRemoveOrgMem(orgId, memberId);
+  const updateUserMutation = useRemoveUser(memberId);
+  // const updateUserMutation = useRemoveOrgMem(orgId, memberId);
 
   const handleClickRemove = () => {
     updateUserMutation.mutate(undefined, {

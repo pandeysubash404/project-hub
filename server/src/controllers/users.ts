@@ -125,7 +125,7 @@ type UpdateUserOrgReqBody = {
   position: string;
   role: 'admin' | 'project manager' | 'member';
 };
-
+/*
 const updateUserOrg = async (
   req: Request<ParamsDictionary, any, UpdateUserOrgReqBody>,
   res: Response
@@ -156,7 +156,7 @@ const updateUserOrg = async (
     return res.status(400).json(err);
   }
 };
-
+*/
 
 const updateUserOrgs = async (
   req: Request<ParamsDictionary, any, UpdateUserOrgReqBody>,
@@ -301,12 +301,29 @@ const createDemoAccount = async (req: Request, res: Response) => {
   }
 };
 
+
+const deleteUser = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.status(200).json({ message: 'User deleted successfully' });
+  } catch (err) {
+    return res.status(500).json({ message: 'Server error', error: err });
+  }
+};
+
 export default {
   registerUser,
   loginUser,
   getUserById,
   getallUser,
-  updateUserOrg,
+  deleteUser,
   updateUserOrgs,
   updateUserProfile,
   updateUserRole,
